@@ -8,39 +8,27 @@
 // 1. Query Param => const { age } = request.query;
 
 import { Router } from 'express';
-import {db} from '../db/index.js'
+import { db } from '../db/index.js'
 
 const router = Router();
 
-const personList = [
-    {
-        name: 'Vignesh',
-        age: 21,
-    },
-    {
-        name: 'Viki',
-        age: 22,
-    },
-    {
-        name: 'Perumal',
-        age: 23,
-    },
-]
-
-router.get('/',
-    (request, response, next) => {
-        console.log("Before Response")
-        next()
-    },
-    (request, response, next) => {
-        response.send(personList)
-    }
-)
+// router.post('/', (request, response) => {
+//     console.log("Body--", request.body);
+//     personList.push(request.body);
+//     response.status(200).send("all ok");
+// })
 
 router.post('/', (request, response) => {
-    console.log("Body--", request.body);
-    personList.push(request.body);
-    response.status(200).send("all ok");
+    let persons = '';
+    for (let i = 0; i < request.body.length; i++) {
+        persons.concat('("')
+        persons.concat(request.body[1].name)
+        persons.concat(')')
+    }
+    // request.body.map((item) => {
+    //     db.query(`insert into persons (name, age) values (${item.name}, ${item.age});`)
+    // })
+    response.status(200).send("Persons Added Sucessfully")
 })
 
 router.get('/all', (request, response) => {
@@ -56,10 +44,10 @@ router.get('/all', (request, response) => {
     })
 })
 
-router.get('/:name', (request, response) => {
-    const { name } = request.params;
-    const person = personList.filter((item) => item.name == name);
-    response.status(200).send(person)
-})
+// router.get('/:name', (request, response) => {
+//     const { name } = request.params;
+//     const person = personList.filter((item) => item.name == name);
+//     response.status(200).send(person)
+// })
 
 export default router; 
