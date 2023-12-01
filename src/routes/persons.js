@@ -7,9 +7,10 @@
 // Have to workout
 // 1. Query Param => const { age } = request.query;
 
-const { Router } = require('express');
+import { Router } from 'express';
+import {db} from '../db/index.js'
 
-const router = Router()
+const router = Router();
 
 const personList = [
     {
@@ -36,16 +37,29 @@ router.get('/',
     }
 )
 
-router.get('/:name', (request, response) => {
-    const { name } = request.params;
-    const person = personList.filter((item) => item.name == name);
-    response.status(200).send(person)
-})
-
 router.post('/', (request, response) => {
     console.log("Body--", request.body);
     personList.push(request.body);
     response.status(200).send("all ok");
 })
 
-module.exports = router;
+router.get('/all', (request, response) => {
+    db.query('SELECT * FROM persons', (err, result) => {
+        if (err) {
+            console.log("Error in Mysql", err)
+            response.status(500).send(err)
+        }
+        else {
+            console.log("Result: ", result)
+            response.json(result)
+        }
+    })
+})
+
+router.get('/:name', (request, response) => {
+    const { name } = request.params;
+    const person = personList.filter((item) => item.name == name);
+    response.status(200).send(person)
+})
+
+export default router; 

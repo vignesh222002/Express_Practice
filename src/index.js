@@ -3,16 +3,25 @@
 // Listen
 // Specify Request Body Type
 
-const express = require('express');
+import express from 'express';
 const app = express();
 const PORT = 4000;
 
-const personRoutes = require('./routes/persons');
-
+import personRoutes from './routes/persons.js';
+import {db} from "./db/index.js"
 
 app.use(express.json())
 
 app.use('/api/persons', personRoutes);
+
+db.connect((err) => {
+    if (err) {
+        console.log("Mysql connection error", err);
+    }
+    else {
+        console.log("Mysql connected Sucessfully")
+    }
+});
 
 app.get('/error', (request, response) => {
     throw new Error('broken');
