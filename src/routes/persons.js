@@ -12,25 +12,6 @@ import { db } from '../db/index.js'
 
 const router = Router();
 
-// router.post('/', (request, response) => {
-//     console.log("Body--", request.body);
-//     personList.push(request.body);
-//     response.status(200).send("all ok");
-// })
-
-router.post('/', (request, response) => {
-    let persons = '';
-    for (let i = 0; i < request.body.length; i++) {
-        persons.concat('("')
-        persons.concat(request.body[1].name)
-        persons.concat(')')
-    }
-    // request.body.map((item) => {
-    //     db.query(`insert into persons (name, age) values (${item.name}, ${item.age});`)
-    // })
-    response.status(200).send("Persons Added Sucessfully")
-})
-
 router.get('/all', (request, response) => {
     db.query('SELECT * FROM persons', (err, result) => {
         if (err) {
@@ -43,6 +24,38 @@ router.get('/all', (request, response) => {
         }
     })
 })
+
+router.post('/', (request, response) => {
+    let persons = request.body.map((item) => `("${item.name}",${item.age})`).join(",");
+    console.log("Persons query", persons);
+    db.query(`insert into persons (name, age) values ${persons};`)
+    response.status(200).send("Persons Added Sucessfully")
+})
+
+router.put('/', async (request, response) => {
+    await request.body.forEach(item => {
+        db.query(`update persons set name = "${item.name}", age = "${item.age}" where id = ${item.id}`, (err, result) => {
+            if (err) {
+                console.log("Error in Mysql", err)
+                response.status(500).send(err)
+            }
+            else {
+                response.status(200).send("Updated")
+            }
+        })
+    })
+    // db.query('select * form persons', (err, result) => {
+    //     if (err) {
+    //         console.log("Error in Mysql", err)
+    //         response.status(500).send(err)
+    //     }
+    //     else {
+    //         console.log("Result: ", result)
+    //         response.json(result)
+    //     }
+    // })
+})
+
 
 // router.get('/:name', (request, response) => {
 //     const { name } = request.params;
