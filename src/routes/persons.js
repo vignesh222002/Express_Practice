@@ -30,6 +30,29 @@ router.post('/', (request, response) => {
     response.status(200).send("Persons Added Sucessfully")
 })
 
+// Error Handler for Asynchronous code
+router.get('/err',
+    (response, request, next) => {
+        console.log("first");
+        setTimeout(() => {
+            try {
+                throw new Error('broken')
+            }
+            catch (err) {
+                console.log("first error", err)
+                next(err);
+            }
+        }, 100);
+        next()
+    },
+    (err, response, request) => {
+        console.log("second")
+        if (err) {
+            console.log("second error", err)
+        }
+    }
+)
+
 router.put('/', async (request, response) => {
     await request.body.forEach(item => {
         db.query(`update persons set name = "${item.name}", age = "${item.age}" where id = ${item.id};`, (err, result) => {
@@ -41,7 +64,6 @@ router.put('/', async (request, response) => {
     })
     response.status(200).send("Updated");
 })
-
 
 router.get('/:name', (request, response) => {
     const { name } = request.params;
