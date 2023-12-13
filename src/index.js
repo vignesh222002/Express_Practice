@@ -8,7 +8,7 @@ const app = express();
 const PORT = 4000;
 
 import personRoutes from './routes/persons.js';
-import {db} from "./db/index.js"
+import { db } from "./db/index.js"
 
 app.use(express.json())
 
