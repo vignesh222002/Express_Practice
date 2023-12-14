@@ -8,11 +8,13 @@ const app = express();
 const PORT = 4000;
 
 import personRoutes from './routes/persons.js';
+import validateRoutes from './routes/validator.js'
 import { db } from "./db/index.js"
 
 app.use(express.json())
 
 app.use('/api/persons', personRoutes);
+app.use('/validate', validateRoutes);
 
 db.connect((err) => {
     if (err) {
